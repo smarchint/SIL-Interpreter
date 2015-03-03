@@ -77,11 +77,11 @@
 %%
 
 Program: GDefblock  Mainblock	{	
-									print_table();
-									if(TypeFlag==0) exit(0);
+									//print_table();
+									if(TypeFlag==0) {printf("Exit status = failure\n");exit(0);}
 									else{
-										$$=makenode(NULL,$2,_Program,0,DUMMY);
-										evaltree($$,-1);
+										//	$$=makenode($2,NULL,_Program,0,DUMMY);
+										evaltree($2,-1);
 										print_table();
 										exit(1);
 									}
@@ -117,31 +117,31 @@ StmtList: Stmt 			{$$=$1;}
 
 Stmt : WRITE '(' Expr ')' ';'
 	
-	{$$=makenode($3,NULL,WRITE,0,DUMMY);if(type_check($$)) TypeFlag = 0;}
+	{$$=makenode($3,NULL,WRITE,0,DUMMY);if(type_check($$)==0) {printf("1\n");TypeFlag = 0;}}
 
 	| READ '(' Var ')' ';'
 
-	{$$=makenode($3,NULL,READ,0,DUMMY);if(type_check($$)) TypeFlag = 0;}
+	{$$=makenode($3,NULL,READ,0,DUMMY);if(type_check($$)==0) {printf("2\n");TypeFlag = 0;}}
 	
 	| IF '(' Relexp ')' THEN StmtList ENDIF ';'
 
-	{$$=makenode($3,$6,IF,0,DUMMY);if(type_check($$)) TypeFlag = 0;}
+	{$$=makenode($3,$6,IF,0,DUMMY);if(type_check($$)==0){ printf("3\n");TypeFlag = 0;}}
 
 	| IF '(' Var ')' THEN StmtList ENDIF ';'
 
-	{$$=makenode($3,$6,IF,0,DUMMY);if(type_check($$)) TypeFlag = 0;}
+	{$$=makenode($3,$6,IF,0,DUMMY);if(type_check($$)==0) {printf("4\n");TypeFlag = 0;}}
 
 	| WHILE '(' Relexp ')' DO StmtList ENDWHILE ';'
 	
-	{$$=makenode($3,$6,WHILE,0,DUMMY);if(type_check($$)) TypeFlag = 0;}
+	{$$=makenode($3,$6,WHILE,0,DUMMY);if(type_check($$)==0) {printf("5\n");TypeFlag = 0;}}
 
 	| Var '=' Expr ';'
 
-	{$$=makenode($1,$3,'=',0,DUMMY);if(type_check($$)) TypeFlag = 0;}
+	{$$=makenode($1,$3,'=',0,DUMMY);if(type_check($$)==0) {printf("6\n");TypeFlag = 0;}}
 
 	| Var '=' Relexp ';'
 
-	{$$=makenode($1,$3,'=',0,DUMMY);if(type_check($$)) TypeFlag = 0;}
+	{$$=makenode($1,$3,'=',0,DUMMY);if(type_check($$)==0) {printf("7\n");TypeFlag = 0;}}
 
 
 	
@@ -154,23 +154,23 @@ Varlist :	Varlist ',' Var  	{$$=makenode($1,$3,_Varlist,0,DUMMY);}
 		
 		;
 
-Relexp  : Expr '<' Expr    	{$$=makenode($1,$3,'<',0,DUMMY);	if(type_check($$)) TypeFlag = 0;}
+Relexp  : Expr '<' Expr    	{$$=makenode($1,$3,'<',0,DUMMY);	if(type_check($$)==0) {printf("8\n");TypeFlag = 0;}}
 
-		| Expr '>' Expr    	{$$=makenode($1,$3,'>',0,DUMMY);	if(type_check($$)) TypeFlag = 0;}
+		| Expr '>' Expr    	{$$=makenode($1,$3,'>',0,DUMMY);	if(type_check($$)==0) {printf("9\n");TypeFlag = 0;}}
 
-		| Expr GE Expr   	{$$=makenode($1,$3,GE,0,DUMMY);		if(type_check($$)) TypeFlag = 0;}
+		| Expr GE Expr   	{$$=makenode($1,$3,GE,0,DUMMY);		if(type_check($$)==0) {printf("10\n");TypeFlag = 0;}}
 
-		| Expr LE Expr    	{$$=makenode($1,$3,LE,0,DUMMY);		if(type_check($$)) TypeFlag = 0;}
+		| Expr LE Expr    	{$$=makenode($1,$3,LE,0,DUMMY);		if(type_check($$)==0) {printf("11\n");TypeFlag = 0;}}
 		
-		| Expr NE Expr   	{$$=makenode($1,$3,NE,0,DUMMY);		if(type_check($$)) TypeFlag = 0;}
+		| Expr NE Expr   	{$$=makenode($1,$3,NE,0,DUMMY);		if(!type_check($$)==0) {printf("12\n");TypeFlag = 0;}}
 
-		| Expr EQEQ Expr   	{$$=makenode($1,$3,EQEQ,0,DUMMY);	if(type_check($$)) TypeFlag = 0;}
+		| Expr EQEQ Expr   	{$$=makenode($1,$3,EQEQ,0,DUMMY);	if(type_check($$)==0) {printf("13\n");TypeFlag = 0;}}
 
-		| '!' Relexp  		{$$=makenode($2,NULL,NOT,0,DUMMY);	if(type_check($$)) TypeFlag = 0;}
+		| '!' Relexp  		{$$=makenode($2,NULL,NOT,0,DUMMY);	if(type_check($$)==0) {printf("14\n");TypeFlag = 0;}}
 
-		| Relexp AND Relexp	{$$=makenode($1,$3,AND,0,DUMMY);	if(type_check($$)) TypeFlag = 0;}
+		| Relexp AND Relexp	{$$=makenode($1,$3,AND,0,DUMMY);	if(type_check($$)==0){printf("15\n");TypeFlag = 0;}}
 
-		| Relexp OR Relexp	{$$=makenode($1,$3,OR,0,DUMMY);		if(type_check($$)) TypeFlag = 0;}
+		| Relexp OR Relexp	{$$=makenode($1,$3,OR,0,DUMMY);		if(type_check($$)==0) {printf("16\n");TypeFlag = 0;}}
 
 		| Truth				{$$=makenode(NULL,NULL,_Truth,$1,DUMMY);}
 
@@ -181,15 +181,15 @@ Relexp  : Expr '<' Expr    	{$$=makenode($1,$3,'<',0,DUMMY);	if(type_check($$)) 
 
 		;
 
-Expr: Expr '+' Expr	{$$=makenode($1,$3,'+',0,DUMMY); if(type_check($$)) TypeFlag = 0;}
+Expr: Expr '+' Expr	{$$=makenode($1,$3,'+',0,DUMMY); if(type_check($$)==0) TypeFlag = 0;}
 
-	| Expr '-' Expr	{$$=makenode($1,$3,'-',0,DUMMY); if(type_check($$)) TypeFlag = 0;}
+	| Expr '-' Expr	{$$=makenode($1,$3,'-',0,DUMMY); if(type_check($$)==0) TypeFlag = 0;}
 
-	| Expr '*' Expr	{$$=makenode($1,$3,'*',0,DUMMY); if(type_check($$)) TypeFlag = 0;}
+	| Expr '*' Expr	{$$=makenode($1,$3,'*',0,DUMMY); if(type_check($$)==0) TypeFlag = 0;}
 
-	| Expr '/' Expr	{$$=makenode($1,$3,'/',0,DUMMY); if(type_check($$)) TypeFlag = 0;}
+	| Expr '/' Expr	{$$=makenode($1,$3,'/',0,DUMMY); if(type_check($$)==0) TypeFlag = 0;}
 
-	| Expr '%' Expr	{$$=makenode($1,$3,_mod,0,DUMMY);if(type_check($$)) TypeFlag = 0;}
+	| Expr '%' Expr	{$$=makenode($1,$3,_mod,0,DUMMY);if(type_check($$)==0) TypeFlag = 0;}
 
 	| INT 			{$$=makenode(NULL,NULL,INT,$1,DUMMY);}
 
@@ -213,8 +213,9 @@ Truth : FALSE 	{$$=$1;}
 %%
 
 int type_check(struct node* nd){
+	if(nd == NULL) return 1;
 
-	//operators ----------------------------------------
+ 	//operators ----------------------------------------
 	if(nd->flag=='+'||nd->flag=='-'||nd->flag=='/'||nd->flag=='*'||\
 		nd->flag==_mod ||nd->flag=='>'||nd->flag=='<'||nd->flag==EQEQ||\
 		nd->flag==NE||nd->flag==LE ||nd->flag==GE) {
@@ -223,8 +224,9 @@ int type_check(struct node* nd){
 
 
 		if(nd->left->flag==ID || nd->left->flag==ARRAY ) {
-			print_table();
+			//print_table();
 			struct gnode* temp=fetch(nd->left->varname);
+			printf("fetched %s\n",temp->name);
 			if(temp->type==1) l=0;
 			else l=1;
 
@@ -238,6 +240,7 @@ int type_check(struct node* nd){
 		if(nd->right->flag==ID || nd->right->flag==ARRAY ) {
 
 			struct gnode* temp=fetch(nd->right->varname);
+			printf("fetched %s\n",temp->name);
 			if(temp->type==1) m=0;
 			else m=1;
 
@@ -263,17 +266,20 @@ int type_check(struct node* nd){
 		//
 		int l=1,m=1;	//default as okay
 
-		if(nd->left->flag==AND ||nd->left->flag==OR ||nd->left->flag==NOT ||\
-		nd->left->flag=='>' ||nd->left->flag=='<' ||\
+		if(nd->left->flag==AND ||nd->left->flag==OR ||nd->left->flag==NOT )
+			if(type_check(nd->left)) l=1;
+		else if(nd->left->flag=='>' ||nd->left->flag=='<' ||\
 		nd->left->flag==EQEQ ||nd->left->flag==NE ||nd->left->flag==LE ||nd->left->flag==GE ) l=1;
 		else l=0;
 
-		if(nd->right &&(
-			nd->right->flag==AND ||	nd->right->flag==OR ||nd->right->flag==NOT ||\
-			nd->right->flag=='>' ||nd->right->flag=='<' ||\
+		if(nd->right){
+			if(nd->right->flag==AND ||	nd->right->flag==OR ||nd->right->flag==NOT )
+				{if(type_check(nd->right)) m=1;}
+			else if(nd->right->flag=='>' ||nd->right->flag=='<' ||\
 			nd->right->flag==EQEQ ||nd->right->flag==NE ||nd->right->flag==LE ||nd->right->flag==GE )
-		  ) m=1;
-		else m=0;
+		  	 m=1;
+			else m=0;
+		}
 			
 		if(l==0 || m==0) {
 			printf("Expected bool but found int in logic\n");
@@ -320,10 +326,10 @@ int type_check(struct node* nd){
 
 	//@Read---------------------------------------------------------------- 
 	else if(nd->flag==READ){
-		
 		struct gnode * temp= fetch(nd->left->varname);
 		//if left has a ijnt
-		if(temp->type==0) return 1;
+		if(temp==NULL) {printf("Expecting a var\n");return 0;}
+		if(temp->type==0) {printf("Sweeet\n");return 1;}
 		else {
 			printf("bools cannot be read\n");
 			return 0;
@@ -334,7 +340,7 @@ int type_check(struct node* nd){
 	else if(nd->flag==WRITE){
 
 		if(nd->left->flag=='+'||nd->left->flag=='/'||\
-			nd->left->flag=='-'||nd->left->flag=='*')
+			nd->left->flag=='-'||nd->left->flag=='*'|| nd->left->flag==INT)
 			return 1;
 		else if(nd->left->flag==ID|| nd->left->flag==ARRAY) {
 			struct gnode * temp= fetch(nd->left->varname);
@@ -343,6 +349,7 @@ int type_check(struct node* nd){
 				printf("Bool cannot be written\n");
 				return 0;
 			}
+			else return 1;
 		}
 		else return 0;
 	}
@@ -351,10 +358,12 @@ int type_check(struct node* nd){
 	else if(nd->flag == IF){	
 		if(nd->left->flag == '>' || nd->left->flag == '<' || nd->left->flag == EQEQ \
 			||nd->left->flag == NE || nd->left->flag == LE || nd->left->flag == GE \
-			|| nd->left->flag == OR|| nd->left->flag == AND|| nd->left->flag == NOT\
 			|| nd->left->flag == _Truth)
 
 			return 1;
+		else if(nd->left->flag == OR|| nd->left->flag == AND|| nd->left->flag == NOT){
+			if(type_check(nd->left->left) && type_check(nd->left->right)) return 1;
+		}
 		else{
 			printf("Expected RELexp in IF but found EXP\n");
 			return 0;
@@ -369,6 +378,7 @@ int type_check(struct node* nd){
 
 
 int evaltree(struct node* nd,int i){		//infix eval
+	//printf("Evaluation\n");
 	if (nd == NULL) {	
 		return 1;
 	}
