@@ -17,9 +17,11 @@
 	#include "table2.c"
 	#include "tree2.c"
 	//#include "tree3.c"
+	//	| INTD Varlist ';'
+	//{$$=makenode($2,NULL,INTD,0,DUMMY);}
+
 	struct node* t;
-	
-	
+
 %}
 
 
@@ -78,7 +80,7 @@ Program: GDefblock  Mainblock	{
 									print_table();
 									if(TypeFlag==0) exit(0);
 									else{
-										$$=makenode($1,$2,_Program,0,DUMMY);
+										$$=makenode(NULL,$2,_Program,0,DUMMY);
 										evaltree($$,-1);
 										print_table();
 										exit(1);
@@ -86,7 +88,7 @@ Program: GDefblock  Mainblock	{
 								}
 	;
 
-GDefblock : DECL GDefList ENDDECL	{$$=$2;}
+GDefblock : DECL GDefList ENDDECL	{$$=$2;evaltree($$);}
 		;
 
 GDefList : GDefList GDecl 	{$$=makenode($1,$2,_GDefList,0,DUMMY);}
@@ -95,9 +97,11 @@ GDefList : GDefList GDecl 	{$$=makenode($1,$2,_GDefList,0,DUMMY);}
 
 		;
 
-GDecl   : GINT Varlist ';'	{$$=makenode($2,NULL,GINT,0,DUMMY);}		//type int
+GDecl   : GINT Varlist ';'	{$$=makenode($2,NULL,GINT,0,DUMMY); }		//type int
+								//evaltree($2,0);}
 		
-		| GBOOL Varlist ';' {$$=makenode($2,NULL,GBOOL,0,DUMMY);}		//type bool
+		| GBOOL Varlist ';' {$$=makenode($2,NULL,GBOOL,0,DUMMY); }		//type bool
+								//evaltree($2,1);}
 		
 		;
 
@@ -139,9 +143,7 @@ Stmt : WRITE '(' Expr ')' ';'
 
 	{$$=makenode($1,$3,'=',0,DUMMY);if(type_check($$)) TypeFlag = 0;}
 
-	| INTD Varlist ';'
 
-	{$$=makenode($2,NULL,INTD,0,DUMMY);}
 	
 	;
 
