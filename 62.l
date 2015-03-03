@@ -2,7 +2,8 @@
 	#include <stdio.h>
 	#include "y.tab.h"
 	extern FILE * yyin;
-	//why varname has been written at bottom? ans: it's blocking other RE.
+	//why varname has been written at bottom? 
+	//ans: it's blocking other RE.
 
 %}
 
@@ -31,6 +32,7 @@ id [a-zA-Z][a-zA-Z0-9]*
 "enddecl"		{return ENDDECL;}
 "bool"			{return GBOOL;}
 "Integer"		{return GINT;}	
+
 "True"			{return TRUE;}
 "False"			{return FALSE;}
 
