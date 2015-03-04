@@ -13,7 +13,7 @@ id [a-zA-Z][a-zA-Z0-9]*
 
 [0-9]+ 			{yylval.val= atoi(yytext); return INT;}
 {op}			{yylval.val= atoi(yytext);return yytext[0];}
-"=="			{return EQEQ;}
+"=="			{return  EQEQ;}
 
 "read" 			{return READ;}
 "write" 		{return WRITE;}

@@ -57,9 +57,10 @@ begin
 
 
 
-	d=False;
+	d=False		;
 	if(!d) then write(2345); endif;
 	endif;
+
 
 
 end

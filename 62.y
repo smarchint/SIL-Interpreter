@@ -172,7 +172,7 @@ Relexp  : Expr '<' Expr    	{$$=makenode($1,$3,'<',0,DUMMY);	if(!type_check($$,0
 
 		| FALSE				{$$=makenode(NULL,NULL,_Truth,FALSE,DUMMY);}
 
-		| Var 				{$$=$1;}
+		| Var 				{$$=$1; }
 
 		;
 
