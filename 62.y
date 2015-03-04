@@ -16,9 +16,6 @@
 	#define ARRAY 34
 	#include "table2.c"
 	#include "tree2.c"
-	//#include "tree3.c"
-	//	| INTD Varlist ';'
-	//{$$=makenode($2,NULL,INTD,0,DUMMY);}
 
 	struct node* t;
 
@@ -208,7 +205,7 @@ Truth : FALSE 	{$$=$1;}
 
 %%
 
-//version 2
+//version 2   incomplete
 int type_check2(struct node * nd){
 	if(nd == NULL) return 1;	//okay
 
@@ -226,7 +223,6 @@ int type_check2(struct node * nd){
 		}
 		
 	}
-
 
 }
 
@@ -294,7 +290,7 @@ int type_check(struct node* nd,int i){
 	else if(nd->flag==AND ||nd->flag==OR||nd->flag==NOT){
 		
 		//i==1 :
-		if (type_check(nd->left,1)==1 && (nd->right) && type_check(nd->right,1)==1 ) 
+		if (type_check(nd->left,1)==1 &&  type_check(nd->right,1)==1 ) 
 			return 1;
 		else return 0;
 	
@@ -439,8 +435,7 @@ int evaltree(struct node* nd,int i){		//infix eval
 		else return TRUE;
 	}
 	else if(nd->flag==NOT){
-	 	if (evaltree(nd->left,i) == TRUE )
-		return FALSE;
+	 	if (evaltree(nd->left,i) == TRUE )  return FALSE;
 		else return TRUE;
 	}
 

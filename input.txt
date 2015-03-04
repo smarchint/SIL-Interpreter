@@ -6,15 +6,9 @@ begin
 	a=10;b=23;c=45;
 	arr[5]=66;
 
-	read(d);
-	read(e);
-
 	d=True;
 	f=True;
 
-	write(d);
-	write(e);
-	write(f);
 	c=a*b;
 	write(c);
 
@@ -39,9 +33,7 @@ begin
 	
 	
 
-	if(!e && f) then
-		write(30000);
-	endif;
+	
 
 
 	if( f || d) then
@@ -58,6 +50,12 @@ begin
 	if(d)then
 		write(1234);
 	endif;
+
+
+	if(!e && f) then
+		write(30000);
+	endif;
+	
 end
 
 	
