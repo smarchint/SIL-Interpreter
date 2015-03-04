@@ -117,31 +117,28 @@ StmtList: Stmt 			{$$=$1;}
 
 Stmt : WRITE '(' Expr ')' ';'
 	
-	{$$=makenode($3,NULL,WRITE,0,DUMMY);if(type_check($$)==0) {printf("1\n");TypeFlag = 0;}}
+	{$$=makenode($3,NULL,WRITE,0,DUMMY);if(!type_check($$,0)==1) {printf("1\n");TypeFlag = 0;}}
 
 	| READ '(' Var ')' ';'
 
-	{$$=makenode($3,NULL,READ,0,DUMMY);if(type_check($$)==0) {printf("2\n");TypeFlag = 0;}}
+	{$$=makenode($3,NULL,READ,0,DUMMY);if(!type_check($$,0)==1) {printf("2\n");TypeFlag = 0;}}
 	
 	| IF '(' Relexp ')' THEN StmtList ENDIF ';'
 
-	{$$=makenode($3,$6,IF,0,DUMMY);if(type_check($$)==0){ printf("3\n");TypeFlag = 0;}}
+	{$$=makenode($3,$6,IF,0,DUMMY);if(!type_check($$,1)==1){ printf("3\n");TypeFlag = 0;}}
 
-	| IF '(' Var ')' THEN StmtList ENDIF ';'
-
-	{$$=makenode($3,$6,IF,0,DUMMY);if(type_check($$)==0) {printf("4\n");TypeFlag = 0;}}
 
 	| WHILE '(' Relexp ')' DO StmtList ENDWHILE ';'
 	
-	{$$=makenode($3,$6,WHILE,0,DUMMY);if(type_check($$)==0) {printf("5\n");TypeFlag = 0;}}
+	{$$=makenode($3,$6,WHILE,0,DUMMY);if(!type_check($$,1)==1) {printf("5\n");TypeFlag = 0;}}
 
 	| Var '=' Expr ';'
 
-	{$$=makenode($1,$3,'=',0,DUMMY);if(type_check($$)==0) {printf("6\n");TypeFlag = 0;}}
+	{$$=makenode($1,$3,'=',0,DUMMY);if(!type_check($$,1)==1) {printf("6\n");TypeFlag = 0;}}
 
 	| Var '=' Relexp ';'
 
-	{$$=makenode($1,$3,'=',0,DUMMY);if(type_check($$)==0) {printf("7\n");TypeFlag = 0;}}
+	{$$=makenode($1,$3,'=',0,DUMMY);if(!type_check($$,1)==1) {printf("7\n");TypeFlag = 0;}}
 
 
 	
@@ -154,42 +151,41 @@ Varlist :	Varlist ',' Var  	{$$=makenode($1,$3,_Varlist,0,DUMMY);}
 		
 		;
 
-Relexp  : Expr '<' Expr    	{$$=makenode($1,$3,'<',0,DUMMY);	if(type_check($$)==0) {printf("8\n");TypeFlag = 0;}}
+Relexp  : Expr '<' Expr    	{$$=makenode($1,$3,'<',0,DUMMY);	if(!type_check($$,0)==1) {printf("8\n");TypeFlag = 0;}}
 
-		| Expr '>' Expr    	{$$=makenode($1,$3,'>',0,DUMMY);	if(type_check($$)==0) {printf("9\n");TypeFlag = 0;}}
+		| Expr '>' Expr    	{$$=makenode($1,$3,'>',0,DUMMY);	if(!type_check($$,0)==1) {printf("9\n");TypeFlag = 0;}}
 
-		| Expr GE Expr   	{$$=makenode($1,$3,GE,0,DUMMY);		if(type_check($$)==0) {printf("10\n");TypeFlag = 0;}}
+		| Expr GE Expr   	{$$=makenode($1,$3,GE,0,DUMMY);		if(!type_check($$,0)==1) {printf("10\n");TypeFlag = 0;}}
 
-		| Expr LE Expr    	{$$=makenode($1,$3,LE,0,DUMMY);		if(type_check($$)==0) {printf("11\n");TypeFlag = 0;}}
+		| Expr LE Expr    	{$$=makenode($1,$3,LE,0,DUMMY);		if(!type_check($$,0)==1) {printf("11\n");TypeFlag = 0;}}
 		
-		| Expr NE Expr   	{$$=makenode($1,$3,NE,0,DUMMY);		if(!type_check($$)==0) {printf("12\n");TypeFlag = 0;}}
+		| Expr NE Expr   	{$$=makenode($1,$3,NE,0,DUMMY);		if(!type_check($$,0)==1) {printf("12\n");TypeFlag = 0;}}
 
-		| Expr EQEQ Expr   	{$$=makenode($1,$3,EQEQ,0,DUMMY);	if(type_check($$)==0) {printf("13\n");TypeFlag = 0;}}
+		| Expr EQEQ Expr   	{$$=makenode($1,$3,EQEQ,0,DUMMY);	if(!type_check($$,0)==1) {printf("13\n");TypeFlag = 0;}}
 
-		| '!' Relexp  		{$$=makenode($2,NULL,NOT,0,DUMMY);	if(type_check($$)==0) {printf("14\n");TypeFlag = 0;}}
+		| '!' Relexp  		{$$=makenode($2,NULL,NOT,0,DUMMY);	if(!type_check($$,1)==1) {printf("14\n");TypeFlag = 0;}}
 
-		| Relexp AND Relexp	{$$=makenode($1,$3,AND,0,DUMMY);	if(type_check($$)==0){printf("15\n");TypeFlag = 0;}}
+		| Relexp AND Relexp	{$$=makenode($1,$3,AND,0,DUMMY);	if(!type_check($$,1)==1){printf("15\n");TypeFlag = 0;}}
 
-		| Relexp OR Relexp	{$$=makenode($1,$3,OR,0,DUMMY);		if(type_check($$)==0) {printf("16\n");TypeFlag = 0;}}
+		| Relexp OR Relexp	{$$=makenode($1,$3,OR,0,DUMMY);		if(!type_check($$,1)==1) {printf("16\n");TypeFlag = 0;}}
 
 		| Truth				{$$=makenode(NULL,NULL,_Truth,$1,DUMMY);}
 
 		| '(' Relexp ')'	{$$=$2;}
 
-
 		| Var 				{$$=$1;}
 
 		;
 
-Expr: Expr '+' Expr	{$$=makenode($1,$3,'+',0,DUMMY); if(type_check($$)==0) TypeFlag = 0;}
+Expr: Expr '+' Expr	{$$=makenode($1,$3,'+',0,DUMMY); if(!type_check($$,0)==0) TypeFlag = 0;}
 
-	| Expr '-' Expr	{$$=makenode($1,$3,'-',0,DUMMY); if(type_check($$)==0) TypeFlag = 0;}
+	| Expr '-' Expr	{$$=makenode($1,$3,'-',0,DUMMY); if(!type_check($$,0)==0) TypeFlag = 0;}
 
-	| Expr '*' Expr	{$$=makenode($1,$3,'*',0,DUMMY); if(type_check($$)==0) TypeFlag = 0;}
+	| Expr '*' Expr	{$$=makenode($1,$3,'*',0,DUMMY); if(!type_check($$,0)==0) TypeFlag = 0;}
 
-	| Expr '/' Expr	{$$=makenode($1,$3,'/',0,DUMMY); if(type_check($$)==0) TypeFlag = 0;}
+	| Expr '/' Expr	{$$=makenode($1,$3,'/',0,DUMMY); if(!type_check($$,0)==0) TypeFlag = 0;}
 
-	| Expr '%' Expr	{$$=makenode($1,$3,_mod,0,DUMMY);if(type_check($$)==0) TypeFlag = 0;}
+	| Expr '%' Expr	{$$=makenode($1,$3,_mod,0,DUMMY);if(!type_check($$,0)==0) TypeFlag = 0;}
 
 	| INT 			{$$=makenode(NULL,NULL,INT,$1,DUMMY);}
 
@@ -214,7 +210,22 @@ Truth : FALSE 	{$$=$1;}
 
 //version 2
 int type_check2(struct node * nd){
-	
+	if(nd == NULL) return 1;	//okay
+
+	if(nd->flag=='+'||nd->flag=='-'||nd->flag=='/'||nd->flag=='*'||\
+		nd->flag==_mod ) {
+		
+		//i == 0 : true  since exp has int but no  bools
+		if (type_check(nd->left,0)==0 && type_check(nd->right,0) ==0){
+			return 0;
+		}
+		else{
+			//error msg
+
+			return 1;
+		}
+		
+	}
 
 
 }
@@ -228,7 +239,7 @@ int type_check(struct node* nd,int i){
 	//base case-------------------------
 	if(nd->flag==ID || nd->flag==ARRAY ) {
 
-		struct gnode* temp=fetch(nd->left->varname);
+		struct gnode* temp=fetch(nd->varname);
 		
 		return temp->type;
 
@@ -335,6 +346,15 @@ int type_check(struct node* nd,int i){
 		}
 	}
 	
+	//while------------------------------------------------------------
+	else if(nd->flag == WHILE){
+
+		if(type_check(nd->left,1)==1) return 1;
+		else {
+			//error msg
+			return 0;
+		}
+	}
 	//end of function : type_check
 }
 
