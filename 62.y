@@ -212,166 +212,129 @@ Truth : FALSE 	{$$=$1;}
 
 %%
 
-int type_check(struct node* nd){
-	if(nd == NULL) return 1;
+//version 2
+int type_check2(struct node * nd){
+	
+
+
+}
+
+
+
+//returns type or (1 for 'okay' and 0 for 'not okay')
+int type_check(struct node* nd,int i){
+	if(nd == NULL) return i;
+
+	//base case-------------------------
+	if(nd->flag==ID || nd->flag==ARRAY ) {
+
+		struct gnode* temp=fetch(nd->left->varname);
+		
+		return temp->type;
+
+	} 
+	if(nd->flag==INT) {
+		if(i==0) return 0;
+		else return 1;
+	}
+
+	if(nd->flag==_Truth){
+
+		if(i==1) return 1;
+		else return 0;
+	}
+
 
  	//operators ----------------------------------------
+ 	//returns type
 	if(nd->flag=='+'||nd->flag=='-'||nd->flag=='/'||nd->flag=='*'||\
-		nd->flag==_mod ||nd->flag=='>'||nd->flag=='<'||nd->flag==EQEQ||\
-		nd->flag==NE||nd->flag==LE ||nd->flag==GE) {
+		nd->flag==_mod ) {
 		
-		int l=1,m=1; //every thing's okay
-
-
-		if(nd->left->flag==ID || nd->left->flag==ARRAY ) {
-			//print_table();
-			struct gnode* temp=fetch(nd->left->varname);
-			printf("fetched %s\n",temp->name);
-			if(temp->type==1) l=0;
-			else l=1;
-
-		} 
-		else if(nd->left->flag=='+'||nd->left->flag=='-'||nd->left->flag=='/'||\
-		nd->left->flag=='*'||nd->left->flag==_mod || nd->flag==INT)	 l=1;
-		else l=0;
-
-		
-
-		if(nd->right->flag==ID || nd->right->flag==ARRAY ) {
-
-			struct gnode* temp=fetch(nd->right->varname);
-			printf("fetched %s\n",temp->name);
-			if(temp->type==1) m=0;
-			else m=1;
-
-		} 
+		//i == 0 : true  since exp has int but no  bools
+		if (type_check(nd->left,0)==0 && type_check(nd->right,0) ==0){
+			return 0;
+		}
 		else{
+			//error msg
 
-			if(nd->right->flag=='+'||nd->right->flag=='-'||nd->right->flag=='/'||\
-			nd->right->flag=='*'||nd->right->flag==_mod || nd->right->flag==INT) m=1;
-			else m=0;
-
+			return 1;
 		}
 		
-		if(l==0 || m==0) {	//if something's wrong
-			printf("Expected int but found bool in operators\n");
-			//exit(1);
-			return 0;			//failure : typo error
-		} 
 	}
 
+	//comparators--------------------------------------------------
+	//returns type
+	if(nd->flag=='>'||nd->flag=='<'||nd->flag==EQEQ||\
+		nd->flag==NE||nd->flag==LE ||nd->flag==GE){
+
+		//i == 0 : true  since exp has int but no  bools
+		if (type_check(nd->left,0)==0 && type_check(nd->right,0) ==0){
+			return 1;
+		}
+		else{
+			//error msg
+
+			return 0;
+		}
+	}
 
 	//logical connectives--------------------------------------------
+	//returns type
 	else if(nd->flag==AND ||nd->flag==OR||nd->flag==NOT){
-		//
-		int l=1,m=1;	//default as okay
-
-		if(nd->left->flag==AND ||nd->left->flag==OR ||nd->left->flag==NOT )
-			if(type_check(nd->left)) l=1;
-		else if(nd->left->flag=='>' ||nd->left->flag=='<' ||\
-		nd->left->flag==EQEQ ||nd->left->flag==NE ||nd->left->flag==LE ||nd->left->flag==GE ) l=1;
-		else l=0;
-
-		if(nd->right){
-			if(nd->right->flag==AND ||	nd->right->flag==OR ||nd->right->flag==NOT )
-				{if(type_check(nd->right)) m=1;}
-			else if(nd->right->flag=='>' ||nd->right->flag=='<' ||\
-			nd->right->flag==EQEQ ||nd->right->flag==NE ||nd->right->flag==LE ||nd->right->flag==GE )
-		  	 m=1;
-			else m=0;
-		}
-			
-		if(l==0 || m==0) {
-			printf("Expected bool but found int in logic\n");
-			return 0; 		//typo error
-			//exit(1);
-		}
-		else return 1; 
 		
+		//i==1 :
+		if (type_check(nd->left,1)==1 && (nd->right) && type_check(nd->right,1)==1 ) 
+			return 1;
+		else return 0;
+	
 	}
 
 
-	//equality---------------------------------------------------------
-	else if(nd->flag== '='){		
+	//assignment---------------------------------------------------------
+	else if(nd->flag== '='){			//i value not considered in te call
 
-		struct gnode * temp= fetch(nd->left->varname);
-		//if right contains a bool
-		if(nd->right->flag == '>' || nd->right->flag == '<' || nd->right->flag == EQEQ \
-			||nd->right->flag == NE || nd->right->flag == LE || nd->right->flag == GE \
-			|| nd->right->flag == OR|| nd->right->flag == AND|| nd->right->flag == NOT\
-			|| nd->right->flag == _Truth){
-				
-				if(temp->type !=1) {	//left is an int
-					printf("int = bool TYPE MISMATCH\n");
-					//exit(1); ///for the time being //later add line no.
-					return 0;				//failure : typo error
-				}
-
-				else return 1;
+		if((type_check(nd->left,0)==type_check(nd->right,0)) ||\
+			(type_check(nd->left,1)==type_check(nd->right,1))){
+			return 1;	//okay
 		}
-
-		//if right is not bool
 		else{	
-
-			if(temp->type !=0) {		//left in a bool
-				printf("bool = int TYPE MISMATCH\n");
-				//exit(1);
-				return 0;					//failure : typo error
-			}
-
-			else return 1;
-			
+			printf("TYPE MISMATCH\n");
+			return 0;	//not okaay
 		}
 	}
 
 	//@Read---------------------------------------------------------------- 
+	//read only int
 	else if(nd->flag==READ){
+		
 		struct gnode * temp= fetch(nd->left->varname);
+		
 		//if left has a ijnt
-		if(temp==NULL) {printf("Expecting a var\n");return 0;}
-		if(temp->type==0) {printf("Sweeet\n");return 1;}
+		if(temp->type==0) {return 1;} 	//okay
 		else {
 			printf("bools cannot be read\n");
 			return 0;
 		}
+
 	}
 
 	//Write----------------------------------------------------------------
+	//write only int
 	else if(nd->flag==WRITE){
 
-		if(nd->left->flag=='+'||nd->left->flag=='/'||\
-			nd->left->flag=='-'||nd->left->flag=='*'|| nd->left->flag==INT)
-			return 1;
-		else if(nd->left->flag==ID|| nd->left->flag==ARRAY) {
-			struct gnode * temp= fetch(nd->left->varname);
-			//if left has a bool 
-			if(temp->type==1){
-				printf("Bool cannot be written\n");
-				return 0;
-			}
-			else return 1;
-		}
-		else return 0;
+		if(type_check(nd->left,i)==0) return 1;	//okay
+		else return 0;							//not okay
 	}
 
 	//if conditional------------------------------------------------------
 	else if(nd->flag == IF){	
-		if(nd->left->flag == '>' || nd->left->flag == '<' || nd->left->flag == EQEQ \
-			||nd->left->flag == NE || nd->left->flag == LE || nd->left->flag == GE \
-			|| nd->left->flag == _Truth)
-
-			return 1;
-		else if(nd->left->flag == OR|| nd->left->flag == AND|| nd->left->flag == NOT){
-			if(type_check(nd->left->left) && type_check(nd->left->right)) return 1;
-		}
+		
+		if(type_check(nd->left,1)==1) return 1; //okay
 		else{
-			printf("Expected RELexp in IF but found EXP\n");
-			return 0;
-			//exit(1);
+			return 0;							//not okay
 		}
 	}
 	
-
 	//end of function : type_check
 }
 
