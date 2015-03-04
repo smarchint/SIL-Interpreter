@@ -16,7 +16,7 @@
 	#define ARRAY 34
 	#include "table2.c"
 	#include "tree2.c"
-
+//		| '(' Relexp ')'	{$$=$2;}
 	struct node* t;
 
 %}
@@ -33,7 +33,8 @@
 
 
 %token <val> INT
-%token <val> WRITE READ
+%token <val> WRITE 
+%token <val> READ
 %token <val> IF THEN ENDIF
 %token <val> WHILE DO ENDWHILE
 %token <val> EQEQ
@@ -42,7 +43,8 @@
 %token <val> SILBEGIN END
 %token <val> DECL ENDDECL
 %token <val> GBOOL GINT INTD BOOLD
-%token <val> TRUE FALSE
+%token <val> TRUE
+%token <val> FALSE
 %token <val> LE GE NE
 %token <val> AND OR NOT
 
@@ -59,11 +61,11 @@
 %type <ptr> GDecl
 %type <ptr> GDefList
 %type <ptr> GDefblock
-%type <val> Truth
 
-%left '!'
+
 %left OR
 %left AND 
+%left '!'
 %left '+' '-'
 %left '*' '/' '%'
 %nonassoc '<'
@@ -166,9 +168,9 @@ Relexp  : Expr '<' Expr    	{$$=makenode($1,$3,'<',0,DUMMY);	if(!type_check($$,0
 
 		| Relexp OR Relexp	{$$=makenode($1,$3,OR,0,DUMMY);		if(!type_check($$,1)==1) {printf("16\n");TypeFlag = 0;}}
 
-		| Truth				{$$=makenode(NULL,NULL,_Truth,$1,DUMMY);}
+		| TRUE				{$$=makenode(NULL,NULL,_Truth,TRUE,DUMMY);}
 
-		| '(' Relexp ')'	{$$=$2;}
+		| FALSE				{$$=makenode(NULL,NULL,_Truth,FALSE,DUMMY);}
 
 		| Var 				{$$=$1;}
 
@@ -197,11 +199,7 @@ Var : ID 				{$$=makenode(NULL,NULL,ID,0,$1);}
 
 	;
 
-Truth : FALSE 	{$$=$1;}
 
-		| TRUE	{$$=$1;}
-
-		;
 
 %%
 
@@ -361,7 +359,7 @@ int evaltree(struct node* nd,int i){		//infix eval
 	if (nd == NULL) {	
 		return 1;
 	}
-	//print(nd);
+	//print(nd);/
 	if(nd->flag==INT){		//integer
 		return nd->val;
 	}	
@@ -391,7 +389,7 @@ int evaltree(struct node* nd,int i){		//infix eval
 	 	}
 
 
-	//revission needed whather to return 1/0 or t/f  time : 5:18  3/3/15 
+
 	else if(nd->flag=='>'){
 		if (evaltree(nd->left,i) > evaltree(nd->right,i)) return TRUE;
 	 	else return FALSE;
@@ -426,7 +424,7 @@ int evaltree(struct node* nd,int i){		//infix eval
 	//checking for bool (and. or .not . )
 	if(nd->flag==AND){
 		if (evaltree(nd->left,i) == TRUE  && evaltree(nd->right,i) == TRUE )
-			{printf("both are true\n");return TRUE;}
+			{;return TRUE;}
 		else return FALSE;
 	}
 	else if(nd->flag==OR){
@@ -441,13 +439,16 @@ int evaltree(struct node* nd,int i){		//infix eval
 
 	
 	else if(nd->flag==_Truth){
+		//printf("Asked for %d\n",nd->val);
 			return nd->val;
 	}
 
 
 	else if(nd->flag== '='){
-		int t=evaltree(nd->right,i);			
-			
+		int t=evaltree(nd->right,i);
+			//printf("Doggie kruger %d",nd->right->flag);
+			//printf("changer  %d\n",t);			
+			//printf("found to change : %s\n",nd->left->varname);
 		if(nd->left->flag==ID)   set(nd->left->varname,t,0);
 
 		else if(nd->left->flag==ARRAY){

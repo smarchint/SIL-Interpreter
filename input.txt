@@ -16,7 +16,7 @@ begin
 		write(b%3);
 	endif;
 
-	d=True;
+	d=10;
 	f=True;
 	e=False;
 
@@ -28,13 +28,6 @@ begin
 	
 	if( d && e || f)then
 		write(10000);
-	endif;
-
-	
-	
-
-	
-
 
 	if( f || d) then
 		write(40000);
@@ -55,7 +48,20 @@ begin
 	if(!e && f) then
 		write(30000);
 	endif;
-	
+	e=True;
+	f=e;
+	d=False;
+	if(!e || e) then
+		write(30001);
+	endif;
+
+
+
+	d=False;
+	if(!d) then write(2345); endif;
+	endif;
+
+
 end
 
 	

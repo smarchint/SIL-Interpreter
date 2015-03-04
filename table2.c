@@ -31,6 +31,7 @@ void set(char* _name,int _value,int _place){
 	//	printf("memory exceeded\n");
 	//}
 	//else{
+
 		if(temp==NULL){				//failure
 			printf("temp at set: %d\n",temp);
 			printf("var not defined\n");
@@ -40,6 +41,7 @@ void set(char* _name,int _value,int _place){
 			//printf("successful var set\n");
 								//success
 		}
+		//if(_place == 0) {printf("ERROR ikkada : %d\n",*(temp->bind));}
 	//}
 }
 void gentry(char* _name,int _type,int _size){	//type : 0 fro int
